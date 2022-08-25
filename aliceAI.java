@@ -1,13 +1,17 @@
 package projectAlice;
 import java.util.*;
 import Jwiki.*;
-import java.time.LocalDateTime;
+import org.apache.commons.net.whois.WhoisClient;
+import java.text.SimpleDateFormat;
+
 
 public class aliceAI {
     static Scanner scan = new Scanner(System.in);
     static String command;
     static String respond;
     static String res;
+    static String resTitle;
+    static String results;
    
     public static String hellow(){
         while(true){
@@ -29,10 +33,13 @@ public class aliceAI {
                 respond = "Response: "+myName();
             }
             else if(command.equalsIgnoreCase("wiki")){
-                respond = "Search result: \nTitle: \nDescription: " + WikiResult();
+                respond = "Search result: " + WikiResult();
             }
             else if(command.equalsIgnoreCase("time") || command.equalsIgnoreCase("date")){
                 respond = Time();
+            }
+            else if(command.equalsIgnoreCase("whois")){
+                respond = WhoIs();
             }
             else{
                 continue;
@@ -49,15 +56,28 @@ public class aliceAI {
     public static String WikiResult(){
         System.out.print("What to search?: ");
         Jwiki wiki = new Jwiki(scan.nextLine()); 
-        res = wiki.getDisplayTitle(); 
+        resTitle = wiki.getDisplayTitle(); 
         res = wiki.getExtractText();
-       //String wikisearch = scan.nextLine();
+       //String prnt = resTitle + res;
        return res;
     }
     public static String Time(){
-        LocalDateTime time = LocalDateTime.now();
-        String timeFormat = time.toString();
-        return timeFormat;
+        java.util.Date date = new java.util.Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy  hh:mm:ss");
+        return (sdf.format(date));
+    }
+    public static String WhoIs(){
+        WhoisClient whois = new WhoisClient();
+        try{
+            System.out.print("Enter Domain: ");
+            String host = scan.next();
+            whois.connect(WhoisClient.DEFAULT_HOST, 43);
+                results = whois.query(host);
+        }
+        catch(Exception e){
+            return e.getMessage();
+        }
+        return results;
     }
     public static void main(String []args){
         while(true){
